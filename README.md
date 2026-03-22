@@ -1,8 +1,8 @@
-# Proyecto de Base de Datos Distribuida con Sharding por Función Determinística
+# Reto de Base de Datos Distribuida con Sharding por Función Determinística
 
 ## 1. Descripción general
 
-Este proyecto implementa una arquitectura distribuida compuesta por 3 shards lógicos con replicación interna, 2 routers encargados de aplicar el mecanismo de shardeo mediante una función determinística y un balanceador que distribuye las solicitudes entre ambos routers.
+Este Reto implementa una arquitectura distribuida compuesta por 3 shards lógicos con replicación interna, 2 routers encargados de aplicar el mecanismo de shardeo mediante una función determinística y un balanceador que distribuye las solicitudes entre ambos routers.
 
 La solución fue diseñada para cumplir con el requerimiento de que el mecanismo de shardeo sea implementado por los routers, garantizando que un mismo identificador siempre sea enviado al mismo shard.
 
