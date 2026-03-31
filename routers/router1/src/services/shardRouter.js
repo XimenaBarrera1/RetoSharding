@@ -36,5 +36,6 @@ function getCollectionByClienteId(clienteId) {
 module.exports = {
   connectToShards,
   getShardKey,
-  getCollectionByClienteId
+  getCollectionByClienteId,
+  databases
 };

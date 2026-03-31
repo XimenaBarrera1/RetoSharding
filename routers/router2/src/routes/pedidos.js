@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getShardKey, getCollectionByClienteId } = require("../services/shardRouter");
+const { getShardKey, getCollectionByClienteId, databases } = require("../services/shardRouter");
 
 router.get("/health", (req, res) => {
   res.json({
@@ -59,6 +59,48 @@ router.get("/pedidos/:cliente_id", async (req, res) => {
     console.error("[router2] Error consultando pedidos:", error);
     res.status(500).json({
       error: "Error interno al consultar pedidos"
+    });
+  }
+});
+
+router.get("/todos-los-pedidos", async (req, res) => {
+  try {
+    // 1. Verificamos si 'databases' tiene algo
+    const keys = Object.keys(databases || {});
+    console.log("[Router] Shards conectados detectados:", keys);
+
+    if (keys.length === 0) {
+      return res.status(500).json({ 
+        error: "El router no tiene conexiones activas a los Shards",
+        ayuda: "Revisa si connectToShards() se ejecutó al inicio" 
+      });
+    }
+
+    // 2. Consultamos cada shard de forma segura
+    const promesas = keys.map(async (key) => {
+      try {
+        // Intentamos sacar los pedidos de este shard específico
+        return await databases[key].collection("pedidos").find().toArray();
+      } catch (shardErr) {
+        console.error(`[Router] Error leyendo de ${key}:`, shardErr.message);
+        return []; // Si un shard falla, devolvemos vacio para que los otros sigan
+      }
+    });
+    
+    const resultadosPorShard = await Promise.all(promesas);
+    const todosLosPedidos = resultadosPorShard.flat(); 
+
+    res.json({
+      total: todosLosPedidos.length,
+      shards_consultados: keys,
+      pedidos: todosLosPedidos
+    });
+
+  } catch (error) {
+    console.error("[Router] Error critico:", error);
+    res.status(500).json({ 
+      error: "Error en Scatter-Gather", 
+      detalle: error.message 
     });
   }
 });
