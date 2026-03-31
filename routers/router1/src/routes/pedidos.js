@@ -65,7 +65,7 @@ router.get("/pedidos/:cliente_id", async (req, res) => {
 
 router.get("/todos-los-pedidos", async (req, res) => {
   try {
-    // 1. Verificamos si 'databases' tiene algo
+   
     const keys = Object.keys(databases || {});
     console.log("[Router] Shards conectados detectados:", keys);
 
