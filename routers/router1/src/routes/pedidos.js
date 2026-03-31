@@ -76,14 +76,14 @@ router.get("/todos-los-pedidos", async (req, res) => {
       });
     }
 
-    // 2. Consultamos cada shard de forma segura
+    
     const promesas = keys.map(async (key) => {
       try {
-        // Intentamos sacar los pedidos de este shard específico
+        
         return await databases[key].collection("pedidos").find().toArray();
       } catch (shardErr) {
         console.error(`[Router] Error leyendo de ${key}:`, shardErr.message);
-        return []; // Si un shard falla, devolvemos vacio para que los otros sigan
+        return []; 
       }
     });
     
